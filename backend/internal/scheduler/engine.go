@@ -13,7 +13,7 @@ const LowerNumberIsHigherPriority = true
 type Engine struct {
 	Processes []*Process
 	Ready     []*Process // Chegaram e nao terminaram
-	Last      *Process   // Ultimo processo que foi executado
+	Last      *Process   // O Atual (se ainda estiver em exec) ou ultimo processo que foi executado
 	Slice     int        // ticks consumidos do quantum
 	T         int        // tick atual
 	Quantum   int
@@ -21,7 +21,7 @@ type Engine struct {
 	Rng       *rand.Rand
 }
 
-// Retorna o processo que está sendo executado no momento, ou nil caso não haja nenhum
+// Retorna o processo que está sendo executado no momento e se ainda resta tempo de execução, ou nil caso não haja nenhum
 func (e *Engine) Current() *Process {
 	if e.Last != nil && e.Last.remaining > 0 {
 		return e.Last
