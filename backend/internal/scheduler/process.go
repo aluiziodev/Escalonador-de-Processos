@@ -10,6 +10,6 @@ type Process struct {
 	remaining int
 	start     int
 	finish    int
-	base      int
-	key       int
+	base      int // Prioridade Estatica
+	key       int // Prioridade Dinâmica
 }
