@@ -258,7 +258,7 @@ Por conta do item 3, simulações com empates totais podem produzir resultados d
  
 ### Round Robin
  
-Usa `Engine.Ready` como fila FIFO. Quando o quantum termina e o processo ainda tem `remaining > 0`, ele é removido e reinserido no final da fila (`after`).
+Usa `Engine.Ready` como fila FIFO. Chegadas de ticks diferentes mantêm sua ordem; processos que chegam no mesmo tick são ordenados pelos desempates do `Best` (processo atual, menor tempo restante e escolha aleatória em caso de novo empate). Quando o quantum termina e o processo ainda tem `remaining > 0`, ele é removido e reinserido no final da fila (`after`).
  
 ### Round Robin com prioridade e aging (`rr-prio-aging`)
  

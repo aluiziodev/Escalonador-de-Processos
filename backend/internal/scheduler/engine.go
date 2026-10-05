@@ -31,9 +31,20 @@ func (e *Engine) Current() *Process {
 
 // Adiciona os processos que chegaram no tick atual à fila de prontos
 func (e *Engine) Push() {
+	var auxReady []*Process
 	for _, p := range e.Processes {
 		if p.Arrival == e.T {
-			e.Ready = append(e.Ready, p)
+			auxReady = append(auxReady, p)
+		}
+	}
+	for len(auxReady) > 0 {
+		next := e.bestFrom(auxReady, func(*Process) int { return 0 })
+		e.Ready = append(e.Ready, next)
+		for i, p := range auxReady {
+			if p == next {
+				auxReady = append(auxReady[:i], auxReady[i+1:]...)
+				break
+			}
 		}
 	}
 }
@@ -54,11 +65,15 @@ func (e *Engine) removeFromReady(p *Process) {
 // (ii) Se ainda houver empate, o processo com menor tempo restante é escolhido.
 // (iii) Se ainda houver empate, um dos processos empatados é escolhido aleatoriamente.
 func (e *Engine) Best(key func(p *Process) int) *Process {
+	return e.bestFrom(e.Ready, key)
+}
+
+func (e *Engine) bestFrom(processes []*Process, key func(p *Process) int) *Process {
 	var candidates []*Process
-	bestKey := -1
-	for _, p := range e.Ready {
+	var bestKey int
+	for _, p := range processes {
 		k := key(p)
-		if bestKey == -1 || k < bestKey {
+		if len(candidates) == 0 || k < bestKey {
 			bestKey = k
 			candidates = []*Process{p}
 		} else if k == bestKey {
